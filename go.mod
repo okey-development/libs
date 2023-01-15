@@ -2,6 +2,8 @@ module libs
 
 go 1.19
 
+replace github.com/okey-development/libs => ./
+
 require (
 	github.com/ClickHouse/clickhouse-go v1.5.4
 	github.com/gin-gonic/gin v1.8.2
@@ -42,5 +44,3 @@ require (
 	golang.org/x/text v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
-
-replace github.com/okey-development/libs => ./
