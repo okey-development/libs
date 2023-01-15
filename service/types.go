@@ -1,25 +1,25 @@
-package httpserver
+package service
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
-type Path string
+type path string
 
-type Method string
+type method string
 
 type Controller string
 
 const (
-	GET    Method = "GET"
-	POST   Method = "POST"
-	PUT    Method = "PUT"
-	DELETE Method = "DELETE"
+	GET    method = "GET"
+	POST   method = "POST"
+	PUT    method = "PUT"
+	DELETE method = "DELETE"
 )
 
 type Controllers map[Controller]func(c *gin.Context)
 
-type Router map[Path]map[Method]Controller
+type Router map[path]map[method]Controller
 
 type ServerConfig struct {
 	Port           string `yaml:"Port"`

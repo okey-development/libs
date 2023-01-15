@@ -2,15 +2,12 @@ module libs
 
 go 1.19
 
-replace github.com/okey-development/libs => ./
-
 require (
 	github.com/ClickHouse/clickhouse-go v1.5.4
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/okey-development/libs v0.0.0-00010101000000-000000000000
 	github.com/rs/zerolog v1.28.0
 	golang.org/x/sync v0.1.0
 	gopkg.in/yaml.v2 v2.4.0

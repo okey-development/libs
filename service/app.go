@@ -8,24 +8,21 @@ import (
 	"syscall"
 	"time"
 
-	db "github.com/okey-development/libs/service/DB"
-	httpserver "github.com/okey-development/libs/service/httpServer"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 )
 
-type Config struct {
+type config struct {
 	Debug        bool   `default:"true"`
 	ServerConfig string `default:"./router/router.yaml"`
-	DB           db.Config
+	DB           dbConfig
 }
 
 type Service struct {
 	AppName     string
-	Controllers httpserver.Controllers
+	Controllers Controllers
 	Befor       func() error
 	After       func() error
 }
@@ -36,10 +33,10 @@ func init() {
 	log.Logger = log.Output(output)
 }
 
-func Start(config *Service) error {
+func Start(serverConfig *Service) error {
 
-	if config.Befor != nil {
-		if err := config.Befor(); err != nil {
+	if serverConfig.Befor != nil {
+		if err := serverConfig.Befor(); err != nil {
 			return fmt.Errorf("error in Befor function: %s", err.Error())
 		}
 	}
@@ -47,9 +44,9 @@ func Start(config *Service) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	cfg := Config{}
+	cfg := config{}
 
-	if err := envconfig.Process(config.AppName, &cfg); err != nil {
+	if err := envconfig.Process(serverConfig.AppName, &cfg); err != nil {
 		log.Fatal().Err(err)
 	}
 
@@ -59,18 +56,18 @@ func Start(config *Service) error {
 
 	log.Debug().Msgf("Config: %#v", cfg)
 
-	if err := db.Init(&cfg.DB); err != nil {
+	if err := initDB(&cfg.DB); err != nil {
 		log.Error().Err(err).Msg("Error connect ti data base")
 	}
 
 	errWg, errCtx := errgroup.WithContext(ctx)
 
 	errWg.Go(func() error {
-		return httpserver.Run(errCtx, cfg.ServerConfig, config.Controllers)
+		return runHttpServer(errCtx, cfg.ServerConfig, serverConfig.Controllers)
 	})
 
-	if config.After != nil {
-		if err := config.After(); err != nil {
+	if serverConfig.After != nil {
+		if err := serverConfig.After(); err != nil {
 			return fmt.Errorf("error in After function: %s", err.Error())
 		}
 	}

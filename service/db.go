@@ -1,4 +1,4 @@
-package db
+package service
 
 import (
 	"database/sql"
@@ -10,16 +10,16 @@ import (
 
 var db *sql.DB
 
-type Config struct {
+type dbConfig struct {
 	Driver string `default:"pgx"`
 	DSN    string `default:"postgres://postgres@127.0.0.1:5432/test"`
 }
 
-func Init(config *Config) error {
+func initDB(config *dbConfig) error {
 	var err error
 	db, err = sql.Open(config.Driver, config.DSN)
 	return err
 }
-func Query(query string, args ...interface{}) (*sql.Rows, error) {
+func QueryDB(query string, args ...interface{}) (*sql.Rows, error) {
 	return db.Query(query, args...)
 }

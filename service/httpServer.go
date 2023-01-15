@@ -1,4 +1,4 @@
-package httpserver
+package service
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Run(ctx context.Context, path string, controllers Controllers) error {
+func runHttpServer(ctx context.Context, path string, controllers Controllers) error {
 	config, err := getConfig(path)
 	if err != nil {
 		return err
