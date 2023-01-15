@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"fmt"
-	db "libs/service/DB"
-	httpserver "libs/service/httpServer"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	db "github.com/okey-development/libs/service/DB"
+	httpserver "github.com/okey-development/libs/service/httpServer"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
