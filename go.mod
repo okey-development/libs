@@ -1,4 +1,4 @@
-module libs
+module github.com/okey-development/libs
 
 go 1.19
 
