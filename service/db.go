@@ -23,3 +23,7 @@ func initDB(config *dbConfig) error {
 func QueryDB(query string, args ...interface{}) (*sql.Rows, error) {
 	return db.Query(query, args...)
 }
+
+func QueryRowDB(query string, args ...interface{}) *sql.Row {
+	return db.QueryRow(query, args...)
+}
