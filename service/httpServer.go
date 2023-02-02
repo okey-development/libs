@@ -92,8 +92,8 @@ type response struct {
 	Message string `json:"message"`
 }
 
-func NewResponce(code int, message string) *Response {
-	return &Response{code, message, nil}
+func NewResponce(code int, message string, data interface{}) *Response {
+	return &Response{code, message, data}
 }
 
 func (resp *Response) Send(c *gin.Context) {
