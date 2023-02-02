@@ -27,3 +27,7 @@ func QueryDB(query string, args ...interface{}) (*sql.Rows, error) {
 func QueryRowDB(query string, args ...interface{}) *sql.Row {
 	return db.QueryRow(query, args...)
 }
+
+func Exec(query string, args ...interface{}) (sql.Result, error) {
+	return db.Exec(query, args...)
+}

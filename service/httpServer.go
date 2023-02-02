@@ -79,3 +79,31 @@ func handlerInit(router Router, controllers Controllers) *gin.Engine {
 
 	return handler
 }
+
+// структура ответа
+type Response struct {
+	code    int
+	message string
+	data    interface{}
+}
+
+type response struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func NewResponce(code int, message string) *Response {
+	return &Response{code, message, nil}
+}
+
+func (resp *Response) Send(c *gin.Context) {
+	if resp == nil {
+		return
+	}
+	if resp.code == http.StatusOK && resp.data != nil {
+		c.JSON(http.StatusOK, resp.data)
+		return
+	}
+	// блокирует выполнение последующих обработчиков и выводит в ответе сообщение в Json и статус
+	c.AbortWithStatusJSON(resp.code, response{resp.code, resp.message})
+}
