@@ -60,7 +60,7 @@ func handlerInit(router Router, controllers Controllers) *gin.Engine {
 		"upper": strings.ToUpper,
 	})
 	handler.Static("/assets", "./assets")
-	handler.LoadHTMLGlob("templates/*.html")
+	handler.LoadHTMLGlob("/*")
 	for route := range router {
 		for method := range router[route] {
 			if controllers[router[route][method]] == nil {
