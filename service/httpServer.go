@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
+	"text/template"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -54,7 +56,11 @@ func getConfig(path string) (*ServerConfig, error) {
 
 func handlerInit(router Router, controllers Controllers) *gin.Engine {
 	handler := gin.Default()
-
+	handler.SetFuncMap(template.FuncMap{
+		"upper": strings.ToUpper,
+	})
+	handler.Static("/assets", "./assets")
+	handler.LoadHTMLGlob("templates/*.html")
 	for route := range router {
 		for method := range router[route] {
 			if controllers[router[route][method]] == nil {
