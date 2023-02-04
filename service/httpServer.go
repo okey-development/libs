@@ -59,7 +59,6 @@ func handlerInit(router Router, controllers Controllers) *gin.Engine {
 	handler.SetFuncMap(template.FuncMap{
 		"upper": strings.ToUpper,
 	})
-	handler.LoadHTMLGlob("/*")
 	for route := range router {
 		for method := range router[route] {
 			if controllers[router[route][method]] == nil {
