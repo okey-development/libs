@@ -53,7 +53,7 @@ func getConfig(path string) (*ServerConfig, error) {
 }
 
 func handlerInit(router Router, controllers Controllers) *gin.Engine {
-	handler := gin.New()
+	handler := gin.Default()
 
 	for route := range router {
 		for method := range router[route] {
