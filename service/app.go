@@ -27,6 +27,8 @@ type Service struct {
 	After       func() error
 }
 
+var appConfig *Service
+
 func init() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339, NoColor: false}
@@ -40,7 +42,7 @@ func Start(serverConfig *Service) error {
 			return fmt.Errorf("error in Befor function: %s", err.Error())
 		}
 	}
-
+	appConfig = serverConfig
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

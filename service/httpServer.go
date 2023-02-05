@@ -42,14 +42,11 @@ func getConfig(path string) (*ServerConfig, error) {
 	if err != nil {
 		return nil, fmt.Errorf("getRouter - error read router file: %v ", err)
 	}
-	log.Debug().Msgf("Config: %#s", string(configFile))
 	config := ServerConfig{Router: make(Router)}
 	err = yaml.Unmarshal(configFile, &config)
 	if err != nil {
 		return nil, fmt.Errorf("getRouter - error unmarshal: %v ", err)
 	}
-
-	log.Debug().Msgf("Config: %#v", config)
 
 	return &config, nil
 }
