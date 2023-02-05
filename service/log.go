@@ -26,7 +26,9 @@ func Warn(str string, args ...any) {
 }
 
 func insertToDb(appName, message string, typeLog typeLog) {
-	Exec(`INSERT INTO audit.logs (service, type, message) VALUES ((select id from admin.apps where name = $1 ), $2, $3);`, appName, typeLog, message)
+	if _, err := Exec(`INSERT INTO audit.logs (service, type, message) VALUES ((select id from admin.apps where name = $1 ), $2, $3);`, appName, typeLog, message); err != nil {
+		log.Error().Err(err)
+	}
 }
 
 type typeLog int
