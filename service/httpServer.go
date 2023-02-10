@@ -53,6 +53,7 @@ func getConfig(path string) (*ServerConfig, error) {
 
 func handlerInit(router Router, controllers Controllers) *gin.Engine {
 	handler := gin.Default()
+	handler.Static("/source", "./source")
 	handler.SetFuncMap(template.FuncMap{
 		"upper": strings.ToUpper,
 	})
