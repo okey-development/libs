@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"runtime"
 
 	"github.com/rs/zerolog/log"
 )
@@ -81,4 +82,19 @@ func GetErrorDetails(err error) error {
 		return fmt.Errorf(errorBody["details"])
 	}
 	return err
+}
+
+func GetCallerName() string {
+	pc := make([]uintptr, 10)
+	n := runtime.Callers(2, pc)
+	if n == 0 {
+		return ""
+	}
+
+	// Извлекаем информацию о вызывающей функции
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+
+	// Получаем имя вызывающей функции
+	return frame.Function
 }
