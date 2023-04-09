@@ -40,17 +40,17 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 		user, err := newToken(signingKeyAccess).Validate(accessToken)
 		if err != nil {
 			Error(err)
-			NewResponce(http.StatusUnauthorized, local.ParseError(err), nil)
+			NewResponce(http.StatusUnauthorized, local.ParseError(err), nil).Send(c)
 			return
 		}
 
 		if !user.CheckAccesses(conf.Accesses) {
-			NewResponce(http.StatusForbidden, ForbbidenAccess, nil)
+			NewResponce(http.StatusForbidden, ForbbidenAccess, nil).Send(c)
 			return
 		}
 
 		if !user.CheckRights(conf.Rights) {
-			NewResponce(http.StatusForbidden, ForbbidenRights, nil)
+			NewResponce(http.StatusForbidden, ForbbidenRights, nil).Send(c)
 			return
 		}
 
