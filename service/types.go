@@ -28,3 +28,8 @@ type ServerConfig struct {
 	WriteTimeout   int    `yaml:"WriteTimeout"`
 	Router         Router `yaml:"Router"`
 }
+
+type Header struct {
+	Authorization string
+	Language      Lang
+}

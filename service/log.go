@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/rs/zerolog/log"
@@ -39,3 +40,45 @@ const (
 	INFO  typeLog = 2
 	DEBUG typeLog = 3
 )
+
+type local struct {
+	lang Lang
+}
+
+func newLocal(lang Lang) *local {
+	return &local{lang: lang}
+}
+
+func (local *local) ParseError(err error) string {
+	return GetLocal(GetErrorKey(err), local.lang)
+}
+
+func (local *local) GetLang() Lang {
+	return local.lang
+}
+
+func NewError(key, details string, arg ...interface{}) error {
+	errorBody, _ := json.Marshal(&map[string]string{
+		"key":     key,
+		"details": fmt.Sprintf(details, arg...),
+	})
+	return fmt.Errorf(string(errorBody))
+}
+
+func GetErrorKey(err error) string {
+	errorBody := make(map[string]string)
+	_ = json.Unmarshal([]byte(err.Error()), errorBody)
+	if _, ok := errorBody["key"]; ok {
+		return errorBody["key"]
+	}
+	return UnknownError
+}
+
+func GetErrorDetails(err error) string {
+	errorBody := make(map[string]string)
+	_ = json.Unmarshal([]byte(err.Error()), errorBody)
+	if _, ok := errorBody["details"]; ok {
+		return errorBody["details"]
+	}
+	return err.Error()
+}
