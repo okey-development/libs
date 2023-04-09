@@ -74,11 +74,11 @@ func GetErrorKey(err error) string {
 	return UnknownError
 }
 
-func GetErrorDetails(err error) string {
+func GetErrorDetails(err error) error {
 	errorBody := make(map[string]string)
 	_ = json.Unmarshal([]byte(err.Error()), errorBody)
 	if _, ok := errorBody["details"]; ok {
-		return errorBody["details"]
+		return fmt.Errorf(errorBody["details"])
 	}
-	return err.Error()
+	return err
 }
