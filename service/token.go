@@ -9,6 +9,10 @@ import (
 
 var signingKeyAccess string
 
+func SetSigningKeyAccess(newSigningKeyAccess string) {
+	signingKeyAccess = newSigningKeyAccess
+}
+
 type token struct {
 	signingKey string
 }
