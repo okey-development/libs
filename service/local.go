@@ -34,9 +34,9 @@ var localities = map[string]map[Lang]string{
 		RU:   "Ошибка аутентификации. Пожалуйста, ввойдите в свой аккаунт",
 	},
 	ForbbidenAccess: {
-		EMTY: "You do not have access to this resource. Try logging in with a different user",
-		EN:   "You do not have access to this resource. Try logging in with a different user",
-		RU:   "У вас нет доступа к этому ресурсу. Попробуйте войти под другим пользователем",
+		EMTY: "At the current rate you do not have access to this action. Try logging in with a different user",
+		EN:   "At the current rate you do not have access to this action. Try logging in with a different user",
+		RU:   "По текущему тарифу у вас нет доступа к этомй действию. Попробуйте войти под другим пользователем",
 	},
 	ForbbidenRights: {
 		EMTY: "You do not have permission for this action. Try logging in with a different user",
