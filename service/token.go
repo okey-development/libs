@@ -27,7 +27,7 @@ func (t *token) Validate(token string) (*User, error) {
 		return nil, err
 	}
 	if user_id == -1 {
-		return nil, NewError(TokenHasExpired).Error(Errorf(TokenHasExpired))
+		return nil, NewError(TokenHasExpired).Error(TokenHasExpired)
 	}
 
 	user, err := GetUserByID(user_id)
@@ -36,7 +36,7 @@ func (t *token) Validate(token string) (*User, error) {
 	}
 
 	if user == nil {
-		return nil, NewError(AccountDontExist).Error(Errorf(AccountDontExist))
+		return nil, NewError(AccountDontExist).Error(AccountDontExist)
 	}
 
 	return user, err

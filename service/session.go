@@ -45,12 +45,12 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 		}
 
 		if !user.CheckAccesses(conf.Accesses) {
-			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenAccess).Error(Errorf(ForbbidenAccess))), nil).Send(c)
+			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenAccess).Error(ForbbidenAccess)), nil).Send(c)
 			return
 		}
 
 		if !user.CheckRights(conf.Rights) {
-			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenAccess).Error(Errorf(ForbbidenRights))), nil).Send(c)
+			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenRights).Error(ForbbidenRights)), nil).Send(c)
 			return
 		}
 

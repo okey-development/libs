@@ -66,8 +66,8 @@ func NewError(key string) *ErrorConstructor {
 	return &ErrorConstructor{key: key}
 }
 
-func (e *ErrorConstructor) Error(err error) error {
-	var details = GetErrorDetails(err).Error()
+func (e *ErrorConstructor) Error(text string) error {
+	var details = GetErrorDetails(fmt.Errorf(text)).Error()
 	pc := make([]uintptr, 10)
 	n := runtime.Callers(2, pc)
 	if n != 0 {
@@ -87,7 +87,7 @@ func (e *ErrorConstructor) Error(err error) error {
 
 func GetErrorKey(err error) string {
 	errorBody := make(map[string]string)
-	_ = json.Unmarshal([]byte(err.Error()), errorBody)
+	_ = json.Unmarshal([]byte(err.Error()), &errorBody)
 	if _, ok := errorBody["key"]; ok {
 		return errorBody["key"]
 	}
@@ -96,7 +96,7 @@ func GetErrorKey(err error) string {
 
 func GetErrorDetails(err error) error {
 	errorBody := make(map[string]string)
-	_ = json.Unmarshal([]byte(err.Error()), errorBody)
+	_ = json.Unmarshal([]byte(err.Error()), &errorBody)
 	if _, ok := errorBody["details"]; ok {
 		return fmt.Errorf(errorBody["details"])
 	}
