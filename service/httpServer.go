@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
 
@@ -108,4 +109,26 @@ func (resp *Response) Send(c *gin.Context) {
 	}
 	// блокирует выполнение последующих обработчиков и выводит в ответе сообщение в Json и статус
 	c.AbortWithStatusJSON(resp.code, response{resp.code, resp.message})
+}
+
+var muhttpCodes sync.RWMutex
+
+var httpCodes = map[string]int{
+	IncorrectParameter:  http.StatusBadRequest,
+	AuthenticationError: http.StatusUnauthorized,
+	ForbbidenAccess:     http.StatusForbidden,
+	ForbbidenRights:     http.StatusForbidden,
+	UnknownError:        http.StatusInternalServerError,
+	TokenHasExpired:     http.StatusUnauthorized,
+	AccountDontExist:    http.StatusUnauthorized,
+}
+
+func GetCode(text string) int {
+	muhttpCodes.RLock()
+	defer muhttpCodes.RUnlock()
+	code, ok := httpCodes[text]
+	if ok {
+		return code
+	}
+	return httpCodes[UnknownError]
 }

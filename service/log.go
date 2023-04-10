@@ -131,3 +131,7 @@ func GetCallerName() string {
 	// Получаем имя вызывающей функции
 	return frame.Function
 }
+
+func GetCodeError(err error) int {
+	return GetCode(GetErrorKey(err))
+}

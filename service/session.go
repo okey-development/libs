@@ -40,7 +40,7 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 		user, err := newToken(signingKeyAccess).Validate(accessToken)
 		if err != nil {
 			Error(err)
-			NewResponce(http.StatusUnauthorized, local.ParseError(err), nil).Send(c)
+			NewResponce(GetCodeError(err), local.ParseError(err), nil).Send(c)
 			return
 		}
 
