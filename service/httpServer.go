@@ -134,10 +134,10 @@ func GetCode(text string) int {
 }
 
 func SetCodes(newHttpCodes map[string]int) {
-	mu.Lock()
-	defer mu.Unlock()
+	muhttpCodes.Lock()
+	defer muhttpCodes.Unlock()
 
-	for constant := range httpCodes {
+	for constant := range newHttpCodes {
 		httpCodes[constant] = newHttpCodes[constant]
 	}
 }

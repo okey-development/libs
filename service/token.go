@@ -24,7 +24,7 @@ func newToken(signingKey string) *token {
 func (t *token) Validate(token string) (*User, error) {
 	user_id, err := t.validate(token)
 	if err != nil {
-		return nil, err
+		return nil, NewError(AuthenticationError).Error(err.Error())
 	}
 	if user_id == -1 {
 		return nil, NewError(TokenHasExpired).Error(TokenHasExpired)
