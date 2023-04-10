@@ -58,10 +58,29 @@ func (local *local) GetLang() Lang {
 	return local.lang
 }
 
-func NewError(key, details string, arg ...interface{}) error {
+type ErrorConstructor struct {
+	key string
+}
+
+func NewError(key string) *ErrorConstructor {
+	return &ErrorConstructor{key: key}
+}
+
+func (e *ErrorConstructor) Error(err error) error {
+	var details = GetErrorDetails(err).Error()
+	pc := make([]uintptr, 10)
+	n := runtime.Callers(2, pc)
+	if n != 0 {
+		// Извлекаем информацию о вызывающей функции
+		frames := runtime.CallersFrames(pc[:n])
+		frame, _ := frames.Next()
+
+		details = fmt.Sprintf("%s: %s", frame.Function, details)
+	}
+
 	errorBody, _ := json.Marshal(&map[string]string{
-		"key":     key,
-		"details": fmt.Sprintf(details, arg...),
+		"key":     e.key,
+		"details": details,
 	})
 	return fmt.Errorf(string(errorBody))
 }
@@ -82,6 +101,20 @@ func GetErrorDetails(err error) error {
 		return fmt.Errorf(errorBody["details"])
 	}
 	return err
+}
+
+func Errorf(format string, arg ...interface{}) error {
+	pc := make([]uintptr, 10)
+	n := runtime.Callers(2, pc)
+	if n == 0 {
+		return fmt.Errorf(format, arg...)
+	}
+
+	// Извлекаем информацию о вызывающей функции
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+
+	return fmt.Errorf("%s: %s", frame.Function, fmt.Sprintf(format, arg...))
 }
 
 func GetCallerName() string {
