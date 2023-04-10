@@ -132,3 +132,12 @@ func GetCode(text string) int {
 	}
 	return httpCodes[UnknownError]
 }
+
+func SetCodes(newHttpCodes map[string]int) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	for constant := range httpCodes {
+		httpCodes[constant] = newHttpCodes[constant]
+	}
+}

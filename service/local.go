@@ -71,8 +71,8 @@ func GetLocal(text string, lang Lang) string {
 }
 
 func SetLocal(newLocalities map[string]map[Lang]string) {
-	mu.RLock()
-	defer mu.RUnlock()
+	mu.Lock()
+	defer mu.Unlock()
 
 	for locality := range newLocalities {
 		localities[locality] = newLocalities[locality]
