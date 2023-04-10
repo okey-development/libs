@@ -18,8 +18,8 @@ func Info(str string, args ...any) {
 }
 
 func Error(err error) {
-	log.Error().Err(err)
-	insertToDb(appConfig.AppName, err.Error(), ERROR)
+	log.Error().Err(GetErrorDetails(err))
+	insertToDb(appConfig.AppName, GetErrorDetails(err).Error(), ERROR)
 }
 
 func Warn(str string, args ...any) {
