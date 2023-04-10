@@ -73,21 +73,26 @@ func (user *UserSQL) Scan() *User {
 	}
 }
 
-func (user *User) CheckAccesses(accesses map[Object]Action) bool {
+func (user *User) CheckAccesses(accesses map[Object][]Action) bool {
 
-	for object, action := range accesses {
-		if !checkAccess(object, action, user.Id) {
-			return false
+	for object, actions := range accesses {
+		for _, action := range actions {
+			if !checkAccess(object, action, user.Id) {
+				return false
+			}
 		}
 	}
 
 	return true
 }
 
-func (user *User) CheckRights(rights map[Object]Action) bool {
-	for object, action := range rights {
-		if !checkRights(object, action, user.Id) {
-			return false
+func (user *User) CheckRights(rights map[Object][]Action) bool {
+
+	for object, actions := range rights {
+		for _, action := range actions {
+			if !checkRights(object, action, user.Id) {
+				return false
+			}
 		}
 	}
 
@@ -95,9 +100,53 @@ func (user *User) CheckRights(rights map[Object]Action) bool {
 }
 
 func checkAccess(object Object, action Action, userId int64) bool {
-	return true
+
+	row := QueryRowDB(`select
+	count(*)
+	from tariff.toc_tariff_user_price ttup 
+	left join tariff.toc_tariffs_accesses tta on tta.tariff_id = ttup.tariff_id 
+	left join tariff.accesses a on a.id  = tta.access_id 
+	left join tariff.objects o on o.id = a.obj_id 
+	left join tariff.actions a2 on a2.id = a.action_id 
+	where ttup.user_id = $1
+	and o."name" = $2
+	and a2."name" = $3
+	and ttup.status = 1
+	and (ttup.day_of_payment > current_date or ttup.day_of_payment isnull)
+	;`, userId, object, action)
+
+	var count sql.NullInt64
+	if err := row.Scan(&count); err != nil {
+		if err != sql.ErrNoRows {
+			Error(Errorf(err.Error()))
+			return false
+		}
+		return false
+	}
+	return count.Int64 > 0
 }
 
 func checkRights(object Object, action Action, userId int64) bool {
-	return true
+
+	row := QueryRowDB(`select
+	count(*)
+	from "admin".users u 
+	left join roles.toc_roles_rights trr on trr.role_id = u.role_id 
+	left join roles.rights r on r.id = trr.right_id  
+	left join roles.objects o on o.id = r.obj_id 
+	left join roles.actions a on a.id = r.action_id 
+	where u.id = $1
+	and o."name" = $2
+	and a."name" = $3
+	;`, userId, object, action)
+
+	var count sql.NullInt64
+	if err := row.Scan(&count); err != nil {
+		if err != sql.ErrNoRows {
+			Error(Errorf(err.Error()))
+			return false
+		}
+		return false
+	}
+	return count.Int64 > 0
 }

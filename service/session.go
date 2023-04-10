@@ -12,8 +12,8 @@ type Object string
 type Action string
 
 type SessionConfig struct {
-	Accesses map[Object]Action
-	Rights   map[Object]Action
+	Accesses map[Object][]Action
+	Rights   map[Object][]Action
 	Handle   func(ctx *Context) *Response
 }
 
