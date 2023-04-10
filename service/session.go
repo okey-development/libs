@@ -33,7 +33,8 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 			return
 		}
 
-		local := newLocal(header.Language)
+		lang := Lang(strings.ToUpper(string(header.Language)))
+		local := newLocal(lang)
 
 		var user *User
 		accessToken := strings.Replace(header.Authorization, "Bearer ", "", -1)
