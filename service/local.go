@@ -36,7 +36,7 @@ var localities = map[string]map[Lang]string{
 	ForbbidenAccess: {
 		EMTY: "At the current rate you do not have access to this action. Try logging in with a different user",
 		EN:   "At the current rate you do not have access to this action. Try logging in with a different user",
-		RU:   "По текущему тарифу у вас нет доступа к этомй действию. Попробуйте войти под другим пользователем",
+		RU:   "По текущему тарифу у вас нет доступа к этому действию. Попробуйте войти под другим пользователем",
 	},
 	ForbbidenRights: {
 		EMTY: "You do not have permission for this action. Try logging in with a different user",
