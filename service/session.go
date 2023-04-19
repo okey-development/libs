@@ -34,6 +34,9 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 		}
 
 		lang := Lang(strings.ToUpper(string(header.Language)))
+		if lang == EMTY {
+			lang = EN
+		}
 		local := newLocal(lang)
 
 		var user *User
