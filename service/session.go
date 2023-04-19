@@ -41,8 +41,9 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 
 		var user *User
 		if len(conf.Rights) > 0 || len(conf.Accesses) > 0 {
+			var err error
 			accessToken := strings.Replace(header.Authorization, "Bearer ", "", -1)
-			user, err := newToken(signingKeyAccess).Validate(accessToken)
+			user, err = newToken(signingKeyAccess).Validate(accessToken)
 			if err != nil {
 				Error(err)
 				NewResponce(GetCodeError(err), local.ParseError(err), nil).Send(c)
