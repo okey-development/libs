@@ -40,22 +40,24 @@ func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 		local := newLocal(lang)
 
 		var user *User
-		accessToken := strings.Replace(header.Authorization, "Bearer ", "", -1)
-		user, err := newToken(signingKeyAccess).Validate(accessToken)
-		if err != nil {
-			Error(err)
-			NewResponce(GetCodeError(err), local.ParseError(err), nil).Send(c)
-			return
-		}
+		if len(conf.Rights) > 0 || len(conf.Accesses) > 0 {
+			accessToken := strings.Replace(header.Authorization, "Bearer ", "", -1)
+			user, err := newToken(signingKeyAccess).Validate(accessToken)
+			if err != nil {
+				Error(err)
+				NewResponce(GetCodeError(err), local.ParseError(err), nil).Send(c)
+				return
+			}
 
-		if !user.CheckAccesses(conf.Accesses) {
-			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenAccess).Error(ForbbidenAccess)), nil).Send(c)
-			return
-		}
+			if !user.CheckAccesses(conf.Accesses) {
+				NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenAccess).Error(ForbbidenAccess)), nil).Send(c)
+				return
+			}
 
-		if !user.CheckRights(conf.Rights) {
-			NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenRights).Error(ForbbidenRights)), nil).Send(c)
-			return
+			if !user.CheckRights(conf.Rights) {
+				NewResponce(http.StatusForbidden, local.ParseError(NewError(ForbbidenRights).Error(ForbbidenRights)), nil).Send(c)
+				return
+			}
 		}
 
 		conf.Handle(&Context{
