@@ -25,7 +25,10 @@ type Context struct {
 
 func BaseHandle(conf *SessionConfig) func(c *gin.Context) {
 	return func(c *gin.Context) {
-
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization, Language")
 		header := Header{}
 		if err := c.ShouldBindHeader(&header); err != nil {
 			Error(err)
