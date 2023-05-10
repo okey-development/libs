@@ -12,6 +12,7 @@ type User struct {
 	Email        string `json:"email"`
 	EmailConfirm bool   `json:"email_confirm"`
 	MainCard     int64  `json:"main_card"`
+	Location     string `json:"location"`
 }
 
 func GetUserByID(user_id int64) (*User, error) {
@@ -23,7 +24,8 @@ func GetUserByID(user_id int64) (*User, error) {
 	u.lang, 
 	u.email, 
 	u.email_confirm, 
-	u.main_card
+	u.main_card,
+	u.location
 	FROM admin.users u 
 	where u.id= $1 and (u.is_archive = false or u.is_archive isnull);`, user_id)
 
@@ -38,7 +40,9 @@ func GetUserByID(user_id int64) (*User, error) {
 		&userSql.LangId,
 		&userSql.Email,
 		&userSql.EmailConfirm,
-		&userSql.MainCard); err != nil {
+		&userSql.MainCard,
+		&userSql.Location,
+	); err != nil {
 		if err != sql.ErrNoRows {
 			return nil, err
 		}
@@ -58,6 +62,7 @@ type UserSQL struct {
 	Email        sql.NullString
 	EmailConfirm sql.NullBool
 	MainCard     sql.NullInt64
+	Location     sql.NullString
 }
 
 func (user *UserSQL) Scan() *User {
@@ -70,6 +75,7 @@ func (user *UserSQL) Scan() *User {
 		Email:        user.Email.String,
 		EmailConfirm: user.EmailConfirm.Bool,
 		MainCard:     user.MainCard.Int64,
+		Location:     user.Location.String,
 	}
 }
 
