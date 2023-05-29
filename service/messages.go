@@ -56,12 +56,10 @@ func SendMessage(message Message) {
 
 }
 
-func DeleteMessages(userId int64, typeMessages TypeMessages, subTypeMessages SubTypeMessages) {
+func DeleteMessages(userId int64, m string) {
 	message := Message{
-		UserId:          userId,
-		TypeMessages:    typeMessages,
-		SubTypeMessages: subTypeMessages,
-		TypeOperation:   DELETE_MESSAGES,
+		UserId:  userId,
+		Message: m,
 	}
 	go func() {
 		jsonData, err := json.Marshal(message)
