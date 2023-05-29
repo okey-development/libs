@@ -35,7 +35,7 @@ type Message struct {
 	SubTypeMessages SubTypeMessages
 	Message         string
 	Delay           int64
-	Lang            Lang
+	Details         map[string]string
 	TypeOperation   MessagesOperation
 }
 
