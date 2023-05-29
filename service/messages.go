@@ -2,11 +2,11 @@ package service
 
 import "encoding/json"
 
-type FirebaseOperation string
+type MessagesOperation string
 
 const (
-	FIREBASE_SUBSCRIBE   FirebaseOperation = "FIREBASE_SUBSCRIBE"
-	FIREBASE_UNSUBSCRIBE FirebaseOperation = "FIREBASE_UNSUBSCRIBE"
+	SEND_MESSAGE    MessagesOperation = "SEND_MESSAGE"
+	DELETE_MESSAGES MessagesOperation = "DELETE_MESSAGES"
 )
 
 type TypeMessages string
@@ -30,14 +30,39 @@ const (
 )
 
 type Message struct {
+	UserId          int64
 	TypeMessages    TypeMessages
 	SubTypeMessages SubTypeMessages
 	Message         string
 	Delay           int64
 	Lang            Lang
+	TypeOperation   MessagesOperation
 }
 
 func SendMessage(message Message) {
+	message.TypeOperation = SEND_MESSAGE
+	go func() {
+		jsonData, err := json.Marshal(message)
+		if err != nil {
+			Error(err)
+			return
+		}
+
+		if err := SendRedisMessage("MESSAGES", jsonData); err != nil {
+			Error(err)
+			return
+		}
+	}()
+
+}
+
+func DeleteMessages(userId int64, typeMessages TypeMessages, subTypeMessages SubTypeMessages) {
+	message := Message{
+		UserId:          userId,
+		TypeMessages:    typeMessages,
+		SubTypeMessages: subTypeMessages,
+		TypeOperation:   DELETE_MESSAGES,
+	}
 	go func() {
 		jsonData, err := json.Marshal(message)
 		if err != nil {
