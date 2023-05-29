@@ -37,14 +37,18 @@ type Message struct {
 	Lang            Lang
 }
 
-func SendMessage(message Message) error {
-	jsonData, err := json.Marshal(message)
-	if err != nil {
-		return Errorf(err.Error())
-	}
+func SendMessage(message Message) {
+	go func() {
+		jsonData, err := json.Marshal(message)
+		if err != nil {
+			Error(err)
+			return
+		}
 
-	if err := SendRedisMessage("MESSAGES", jsonData); err != nil {
-		return Errorf(err.Error())
-	}
-	return nil
+		if err := SendRedisMessage("MESSAGES", jsonData); err != nil {
+			Error(err)
+			return
+		}
+	}()
+
 }
