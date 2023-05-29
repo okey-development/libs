@@ -26,7 +26,7 @@ func client() *redis.Client {
 	return instance
 }
 
-func SendMessage(recipient string, message interface{}) error {
+func SendRedisMessage(recipient string, message interface{}) error {
 	err := client().Publish(recipient, message).Err()
 	if err != nil {
 		return Errorf(err.Error())
