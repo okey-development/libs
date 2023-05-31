@@ -95,6 +95,12 @@ type response struct {
 	Message string `json:"message"`
 }
 
+type responseExtended struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
 func NewResponce(code int, message string, data interface{}) *Response {
 	return &Response{code, message, data}
 }
@@ -103,10 +109,17 @@ func (resp *Response) Send(c *gin.Context) {
 	if resp == nil {
 		return
 	}
+
 	if resp.code == http.StatusOK && resp.data != nil {
 		c.JSON(http.StatusOK, resp.data)
 		return
 	}
+
+	if resp.data != nil {
+		c.AbortWithStatusJSON(resp.code, responseExtended{resp.code, resp.message, resp.data})
+		return
+	}
+
 	// блокирует выполнение последующих обработчиков и выводит в ответе сообщение в Json и статус
 	c.AbortWithStatusJSON(resp.code, response{resp.code, resp.message})
 }
