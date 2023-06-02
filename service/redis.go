@@ -2,6 +2,7 @@ package service
 
 import (
 	"sync"
+	"time"
 
 	"github.com/go-redis/redis"
 )
@@ -59,4 +60,20 @@ func Subscribe(callBack func(payload string), amountRoutines int) error {
 		}()
 	}
 	return nil
+}
+
+func SetStringValue(key, value string, expiration time.Duration) error {
+	return client().Set(key, value, expiration).Err()
+}
+
+func SetInt64Value(key string, value int64, expiration time.Duration) error {
+	return client().Set(key, value, expiration).Err()
+}
+
+func GetStringValue(key string) (string, error) {
+	return client().Get("key").Result()
+}
+
+func GetStringInt64(key string) (int64, error) {
+	return client().Get(key).Int64()
 }
