@@ -22,15 +22,15 @@ func newToken(signingKey string) *token {
 }
 
 func (t *token) Validate(token string) (*User, error) {
-	user_id, err := t.validate(token)
+	user_uuid, err := t.validate(token)
 	if err != nil {
 		return nil, NewError(AuthenticationError).Error(err.Error())
 	}
-	if user_id == -1 {
+	if user_uuid == "" {
 		return nil, NewError(TokenHasExpired).Error(TokenHasExpired)
 	}
 
-	user, err := GetUserByID(user_id)
+	user, err := getUserByUUID(user_uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (t *token) Validate(token string) (*User, error) {
 	return user, err
 }
 
-func (t *token) validate(tokenValidating string) (int64, error) {
+func (t *token) validate(tokenValidating string) (string, error) {
 
 	var tokenClaims tokenClaims
 	token, err := jwt.ParseWithClaims(tokenValidating, &tokenClaims, func(token *jwt.Token) (interface{}, error) {
@@ -53,26 +53,26 @@ func (t *token) validate(tokenValidating string) (int64, error) {
 	})
 
 	if err != nil {
-		return -1, err
+		return "", err
 	}
 
 	if !token.Valid {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-				return -1, fmt.Errorf("token expired")
+				return "", fmt.Errorf("token expired")
 			}
 		}
 	}
 
-	return tokenClaims.Id, nil
+	return tokenClaims.UUID, nil
 }
 
 type TokenType string
 
 type tokenClaims struct {
-	Id         int64 `json:"id"`
-	Authorized bool  `json:"authorized"`
-	Exp        int64 `json:"exp"`
+	UUID       string `json:"uuid"`
+	Authorized bool   `json:"authorized"`
+	Exp        int64  `json:"exp"`
 }
 
 func (token *tokenClaims) Valid() error {
@@ -83,4 +83,26 @@ func (token *tokenClaims) Valid() error {
 		return fmt.Errorf("Unauthorized")
 	}
 	return nil
+}
+
+const (
+	ttlUUID = 24 * 7 * time.Hour
+)
+
+func getUserByUUID(uuid string) (*User, error) {
+	userId, _ := GetStringInt64(uuid)
+	if userId == 0 {
+		user, err := GetUserByUUID(uuid)
+		if err != nil {
+			return nil, err
+		}
+
+		err = SetInt64Value(uuid, user.Id, ttlUUID)
+		if err != nil {
+			Error(Errorf(err.Error()))
+		}
+
+		return user, nil
+	}
+	return GetUserByID(userId)
 }

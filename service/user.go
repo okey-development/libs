@@ -13,6 +13,7 @@ type User struct {
 	EmailConfirm bool   `json:"email_confirm"`
 	MainCard     int64  `json:"main_card"`
 	Location     string `json:"location"`
+	UUID         string `json:"uuid"`
 }
 
 func GetUserByID(user_id int64) (*User, error) {
@@ -25,7 +26,8 @@ func GetUserByID(user_id int64) (*User, error) {
 	u.email, 
 	u.email_confirm, 
 	u.main_card,
-	u.location
+	u.location,
+	u.uuid
 	FROM admin.users u 
 	where u.id= $1 and (u.is_archive = false or u.is_archive isnull);`, user_id)
 
@@ -42,6 +44,46 @@ func GetUserByID(user_id int64) (*User, error) {
 		&userSql.EmailConfirm,
 		&userSql.MainCard,
 		&userSql.Location,
+		&userSql.UUID,
+	); err != nil {
+		if err != sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, nil
+	}
+
+	return userSql.Scan(), nil
+}
+
+func GetUserByUUID(uuid string) (*User, error) {
+	row := QueryRowDB(`SELECT u.id, 
+	u.referredby, 
+	u.account, 
+	u.firstname, 
+	u.lastname, 
+	u.lang, 
+	u.email, 
+	u.email_confirm, 
+	u.main_card,
+	u.location,
+	u.uuid
+	FROM admin.users u 
+	where u.uuid= $1 and (u.is_archive = false or u.is_archive isnull);`, uuid)
+
+	var (
+		userSql UserSQL
+	)
+	if err := row.Scan(&userSql.Id,
+		&userSql.ReferralId,
+		&userSql.Username,
+		&userSql.Firstname,
+		&userSql.Lastname,
+		&userSql.LangId,
+		&userSql.Email,
+		&userSql.EmailConfirm,
+		&userSql.MainCard,
+		&userSql.Location,
+		&userSql.UUID,
 	); err != nil {
 		if err != sql.ErrNoRows {
 			return nil, err
@@ -63,6 +105,7 @@ type UserSQL struct {
 	EmailConfirm sql.NullBool
 	MainCard     sql.NullInt64
 	Location     sql.NullString
+	UUID         sql.NullString
 }
 
 func (user *UserSQL) Scan() *User {
@@ -76,6 +119,7 @@ func (user *UserSQL) Scan() *User {
 		EmailConfirm: user.EmailConfirm.Bool,
 		MainCard:     user.MainCard.Int64,
 		Location:     user.Location.String,
+		UUID:         user.UUID.String,
 	}
 }
 
