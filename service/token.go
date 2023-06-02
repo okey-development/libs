@@ -97,9 +97,11 @@ func getUserByUUID(uuid string) (*User, error) {
 			return nil, err
 		}
 
-		err = SetInt64Value(uuid, user.Id, ttlUUID)
-		if err != nil {
-			Error(Errorf(err.Error()))
+		if user != nil {
+			err = SetInt64Value(uuid, user.Id, ttlUUID)
+			if err != nil {
+				Error(Errorf(err.Error()))
+			}
 		}
 
 		return user, nil
