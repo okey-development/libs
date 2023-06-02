@@ -91,6 +91,7 @@ const (
 
 func getUserByUUID(uuid string) (*User, error) {
 	userId, _ := GetStringInt64(uuid)
+	Info("getUserByUUID userId %d", userId)
 	if userId == 0 {
 		user, err := GetUserByUUID(uuid)
 		if err != nil {
