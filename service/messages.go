@@ -39,6 +39,7 @@ type Message struct {
 	Delay           int64
 	Details         map[string]string
 	TypeOperation   MessagesOperation
+	SendOnceADay    bool
 }
 
 func SendMessage(message Message) {
